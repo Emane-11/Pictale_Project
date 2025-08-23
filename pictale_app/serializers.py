@@ -58,3 +58,15 @@ class PhotoRecommendationSerializer(serializers.ModelSerializer):
         if instance.status != new_status:
             instance.reviewed_at = timezone.now()  # set reviewed_at to current time
         return super().update(instance, validated_data)
+
+# Serializer for Profile Updates
+
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "email", "first_name", "last_name"]
+        read_only_fields = ["id", "username"]  # don’t allow username changes
