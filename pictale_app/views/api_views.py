@@ -4,15 +4,23 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from ..models import DailyPhoto, Comment, Like, SavedPhoto, PhotoRecommendation
 from pictale_app.permissions import IsAuthorOrReadOnly
+from rest_framework.pagination import PageNumberPagination
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 from ..serializers import (
     DailyPhotoSerializer, CommentSerializer, LikeSerializer, 
     SavedPhotoSerializer, PhotoRecommendationSerializer
 )
 
-
 # ----------------------------
 # DailyPhoto API
 # ----------------------------
+
+class DailyPhotoPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 50
+
 class DailyPhotoViewSet(viewsets.ModelViewSet):
     """
     CRUD for DailyPhoto.
@@ -22,6 +30,10 @@ class DailyPhotoViewSet(viewsets.ModelViewSet):
     queryset = DailyPhoto.objects.all().order_by('-date_featured')
     serializer_class = DailyPhotoSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
+    pagination_class = DailyPhotoPagination
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['date_featured', 'author__username']  # exact match filters
+    search_fields = ['title', 'story']  # partial match search
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -38,6 +50,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     Logged-in users can create comments. Automatically assigns request.user as author.
     Supports filtering by photo via ?post_id=<id>
     """
+    queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 

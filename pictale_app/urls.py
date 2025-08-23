@@ -5,7 +5,7 @@ from .views.auth import RegisterAPIView, CustomObtainAuthToken, LogoutAPIView, P
 
 router = DefaultRouter()
 router.register(r'dailyphotos', api_views.DailyPhotoViewSet)
-router.register(r'comments', api_views.CommentViewSet)
+router.register(r'comments', api_views.CommentViewSet, basename='comment')
 router.register(r'likes', api_views.LikeViewSet)
 router.register(r'savedphotos', api_views.SavedPhotoViewSet)
 router.register(r'recommendations', api_views.PhotoRecommendationViewSet)
