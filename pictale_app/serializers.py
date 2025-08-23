@@ -1,70 +1,82 @@
 from rest_framework import serializers
-from .models import DailyPhoto, Comment, Like, SavedPhoto, PhotoRecommendation
 from django.utils import timezone
+from django.contrib.auth import get_user_model
+from .models import DailyPhoto, Comment, Like, SavedPhoto, PhotoRecommendation
 
-# Nested serializer for comments
+User = get_user_model()
+
+# ----------------------------
+# Comment Serializer
+# ----------------------------
 class CommentSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField(read_only=True)  # display username instead of ID
+
     class Meta:
         model = Comment
-        fields = ['id', 'user', 'text', 'created_at']
+        fields = ['id', 'user', 'comment_text', 'created_at']
 
-# Nested serializer for likes
+
+# ----------------------------
+# Like Serializer
+# ----------------------------
 class LikeSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField(read_only=True)  # display username instead of ID
+
     class Meta:
         model = Like
         fields = ['id', 'user', 'created_at']
 
-# Main serializer for DailyPhoto with nested comments and likes
+
+# ----------------------------
+# DailyPhoto Serializer
+# ----------------------------
 class DailyPhotoSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)  # show all comments for this photo
     likes = LikeSerializer(many=True, read_only=True)        # show all likes for this photo
+    comments_count = serializers.IntegerField(source='comments.count', read_only=True)
+    likes_count = serializers.IntegerField(source='likes.count', read_only=True)
 
     class Meta:
         model = DailyPhoto
         fields = [
             'id', 'title', 'image', 'story', 'date_taken', 
-            'date_featured', 'comments', 'likes'
+            'date_featured', 'comments', 'likes', 'comments_count', 'likes_count'
         ]
 
-# Serializer for SavedPhotos
+
+# ----------------------------
+# SavedPhoto Serializer
+# ----------------------------
 class SavedPhotoSerializer(serializers.ModelSerializer):
+    post_title = serializers.CharField(source='post.title', read_only=True)
+    post_author = serializers.CharField(source='post.author.username', read_only=True)
+
     class Meta:
         model = SavedPhoto
-        fields = '__all__'
-
-# Serializer for PhotoRecommendation
-
-'''
-    When an admin updates status (Ex: from 'pending' → 'approved'), 
-   the serializer detects the change.
-
-   reviewed_at is automatically set to current datetime.
-
-   The field remains read-only for API users, they cannot manually set it
- '''
+        fields = ['id', 'user', 'post', 'post_title', 'post_author', 'saved_at']
 
 
+# ----------------------------
+# PhotoRecommendation Serializer
+# ----------------------------
 class PhotoRecommendationSerializer(serializers.ModelSerializer):
-    reviewed_at = serializers.DateTimeField(read_only=True) #This ensures that only backend logic (when an admin approves/rejects a recommendation) can set reviewed_at
+    reviewed_at = serializers.DateTimeField(read_only=True)  # set automatically on status change
+    user = serializers.StringRelatedField(read_only=True)    # show username instead of ID
 
     class Meta:
         model = PhotoRecommendation
         fields = '__all__'
 
-
     def update(self, instance, validated_data):
-        # Check if status is being updated
         new_status = validated_data.get('status', instance.status)
         if instance.status != new_status:
-            instance.reviewed_at = timezone.now()  # set reviewed_at to current time
+            instance.reviewed_at = timezone.now()  # automatically update reviewed_at
         return super().update(instance, validated_data)
 
-# Serializer for Profile Updates
 
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
-
+# ----------------------------
+# Profile Serializer
+# ----------------------------
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
