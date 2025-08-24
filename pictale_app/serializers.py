@@ -13,7 +13,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ['id', 'user', 'comment_text', 'created_at']
+        fields = ['id', 'user', 'post', 'comment_text', 'created_at']
 
 
 # ----------------------------
@@ -24,7 +24,7 @@ class LikeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Like
-        fields = ['id', 'user', 'created_at']
+        fields = ['id', 'user', 'post', 'created_at']
 
 
 # ----------------------------
@@ -48,6 +48,7 @@ class DailyPhotoSerializer(serializers.ModelSerializer):
 # SavedPhoto Serializer
 # ----------------------------
 class SavedPhotoSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField(read_only=True)  # always current logged-in user
     post_title = serializers.CharField(source='post.title', read_only=True)
     post_author = serializers.CharField(source='post.author.username', read_only=True)
 
