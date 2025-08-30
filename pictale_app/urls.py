@@ -18,9 +18,11 @@ urlpatterns = [
     path('auth/login/', CustomObtainAuthToken.as_view(), name='login'),
     path('auth/logout/', LogoutAPIView.as_view(), name='logout'),
     path('auth/profile/', ProfileAPIView.as_view(), name='profile'),
+    
 
     # Frontend routes
     path('home/', frontend_views.home, name='home'),
     path('photo/<int:photo_id>/like/', frontend_views.like_photo, name='like_photo'),
     path('photo/<int:photo_id>/comment/', frontend_views.add_comment, name='add_comment'),
+    path('photo/<int:photo_id>/save/', frontend_views.save_photo, name='save_photo'),
 ]

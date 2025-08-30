@@ -27,6 +27,12 @@
                     <button type="submit">👍 Like ({{ daily_photo.likes.count }})</button>
                 </form>
 
+                <!-- Save form -->
+                <form action="{% url 'save_photo' daily_photo.id %}" method="post" style="display:inline; margin-left: 10px;">
+                    {% csrf_token %}
+                    <button type="submit">💾 Save Photo</button>
+                </form>
+
                 <!-- Comment form -->
                 <form action="{% url 'add_comment' daily_photo.id %}" method="post" style="margin-top:10px;">
                     {% csrf_token %}
@@ -34,7 +40,7 @@
                     <button type="submit">Post Comment</button>
                 </form>
             {% else %}
-                <p><a href="{% url 'login' %}">Login</a> to like or comment.</p>
+                <p><a href="{% url 'login' %}">Login</a> to like, save, or comment.</p>
             {% endif %}
         </div>
 
@@ -91,4 +97,3 @@
     }
 </style>
 {% endblock %}
-
