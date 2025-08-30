@@ -1,63 +1,124 @@
-# Pictale Project
+Pictale Project
+Pictale is a Django-based project that provides a full-stack solution for photo sharing. It includes robust user authentication, a RESTful API, and a dynamic frontend for a seamless user experience.
 
-Pictale is a Django-based project that provides authentication and API endpoints for user registration and login.  
-This repository contains the source code and setup instructions.
+🚀 Features
+User Authentication: Secure registration and login functionalities.
 
----
+API Endpoints: RESTful API for user authentication and data management using Django REST Framework.
 
-## 🚀 Features
-- User registration (`/api/auth/register/`)
-- User login (`/api/auth/login/`)
-- Token-based authentication
-- Django REST Framework integration
+Token-based Authentication: Ensures secure API access.
 
----
+Dynamic Frontend: A complete web interface built with Django templates, offering the following features:
 
-## 🛠️ Installation & Setup
+Home Page: Displays a daily featured photo with a narrative story.
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Emane11/Pictale_Project.git
-   cd Pictale_Project
+User Profile: Allows users to view and edit their profile, including a profile picture and a bio.
+
+User Interactions: Users can like, save, and comment on photos.
+
+Photo Recommendations: Users can submit their own photo recommendations for review.
+
+Responsive Design: The interface is styled for a modern, clean look that works across devices.
+
+🛠️ Installation & Setup
+Clone the repository
+
+git clone [https://github.com/Emane11/Pictale_Project.git](https://github.com/Emane11/Pictale_Project.git)
+cd Pictale_Project
+
 Create & activate a virtual environment
 
-bash:
 python -m venv venv
-source venv/bin/activate   # On macOS/Linux
-venv\Scripts\activate      # On Windows
+source venv/bin/activate  # On macOS/Linux
+venv\Scripts\activate     # On Windows
+
 Install dependencies
 
-bash:
 pip install -r requirements.txt
+
 Run migrations
 
-bash:
 python manage.py migrate
+
 Start the development server
 
-bash:
 python manage.py runserver
 
-📡 API Endpoints
-Method	Endpoint	Description
-POST	/api/auth/register/	Register new user
-POST	/api/auth/login/	Login user
+The application will be accessible at http://127.0.0.1:8000/.
 
-🧪 Testing with Postman
+📡 API Endpoints
+Method
+
+Endpoint
+
+Description
+
+POST
+
+/api/auth/register/
+
+Register a new user
+
+POST
+
+/api/auth/login/
+
+Log in a user
+
+🖥️ Frontend URLs
+Endpoint
+
+Description
+
+/
+
+Home page displaying the daily photo
+
+/profile/
+
+User profile page with saved photos
+
+/profile/edit/
+
+Page for editing user profile information
+
+/recommendations/
+
+Page to submit photo recommendations
+
+/login/
+
+User login page
+
+/register/
+
+User registration page
+
+🧪 Testing
+API Testing with Postman:
+
 Open Postman.
 
-Import the collection (postman_collection.json) if available.
+Import the provided collection (postman_collection.json) if available.
 
-Send a request to the API running at:
-http://127.0.0.1:8000/api/auth/
+Send requests to the API running at http://127.0.0.1:8000/api/auth/.
+
+Frontend Testing:
+
+Access the web application by navigating to http://127.0.0.1:8000/ in your browser.
 
 📂 Project Structure
-
 Pictale_Project/
-├── api/                # App containing authentication logic
-├── Pictale_Project/    # Project settings
+├── pictale_app/          # Main app for frontend views, templates, and models
+│   ├── templates/        # HTML templates for frontend rendering
+│   ├── migrations/
+│   ├── views/
+│   ├── models.py
+│   ├── urls.py
+│   └── ...
+├── Pictale_Project/      # Project settings
 ├── manage.py
 └── requirements.txt
 
 🤝 Contributing
-Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

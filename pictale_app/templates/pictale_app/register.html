@@ -1,0 +1,58 @@
+{% extends "pictale_app/base.html" %}
+{% block content %}
+<div class="container" style="max-width: 500px;">
+    <h2 style="text-align: center; color: #444; margin-bottom: 25px;">Register</h2>
+    <form method="post">
+        {% csrf_token %}
+        <style>
+            .form-group p {
+                margin-bottom: 20px;
+            }
+            .form-group p label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 600;
+                color: #555;
+            }
+            .form-group p input {
+                width: 100%;
+                padding: 12px;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                font-size: 16px;
+                box-sizing: border-box;
+                transition: border-color 0.3s ease;
+            }
+            .form-group p input:focus {
+                outline: none;
+                border-color: #007bff;
+            }
+            .button {
+                display: inline-block;
+                padding: 12px 25px;
+                border: none;
+                border-radius: 6px;
+                font-size: 16px;
+                font-weight: bold;
+                cursor: pointer;
+                text-align: center;
+                transition: background-color 0.3s ease;
+                width: 100%;
+                margin-top: 10px;
+            }
+            .button-primary {
+                background-color: #007bff;
+                color: white;
+            }
+            .button-primary:hover {
+                background-color: #0056b3;
+            }
+        </style>
+        <div class="form-group">
+            {{ form.as_p }}
+        </div>
+        <button type="submit" class="button button-primary">Register</button>
+    </form>
+    <p style="text-align: center; margin-top: 20px;">Already have an account? <a href="{% url 'login' %}" style="color: #007bff; text-decoration: none;">Login here</a>.</p>
+</div>
+{% endblock %}

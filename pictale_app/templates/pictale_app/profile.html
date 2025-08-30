@@ -1,0 +1,41 @@
+{% extends "pictale_app/base.html" %}
+{% block content %}
+<div class="profile-container">
+    <h2 style="text-align: center; color: #444; margin-bottom: 30px;">My Profile</h2>
+
+    <div class="profile-info" style="display: flex; align-items: center; gap: 30px; margin-bottom: 30px;">
+        {% if user.profile_picture %}
+            <img src="{{ user.profile_picture.url }}" class="profile-pic" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #ddd;">
+        {% else %}
+            <img src="https://via.placeholder.com/120" class="profile-pic" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #ddd;">
+        {% endif %}
+        <div>
+            <p style="margin: 5px 0;"><strong>Username:</strong> {{ user.username }}</p>
+            <p style="margin: 5px 0;"><strong>Email:</strong> {{ user.email }}</p>
+            <p style="margin: 5px 0;"><strong>Bio:</strong> {{ user.bio|default:"No bio yet" }}</p>
+        </div>
+    </div>
+
+    <div class="profile-actions" style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 30px;">
+        <a href="{% url 'edit_profile' %}" class="button button-secondary">Edit Profile</a>
+        <a href="{% url 'change_password' %}" class="button button-secondary">Change Password</a>
+        <a href="{% url 'recommendations' %}" class="button button-secondary">My Recommendations</a>
+    </div>
+
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
+
+    <h3 style="color: #444; margin-bottom: 20px;">Saved Photos</h3>
+    <div class="gallery-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px;">
+        {% for saved in saved_photos %}
+            <div class="photo-card" style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center;">
+                <a href="{% url 'photo_detail' saved.post.id %}" style="text-decoration: none; color: inherit;">
+                    <img src="{{ saved.post.image.url }}" alt="{{ saved.post.title }}" style="width: 100%; height: 150px; object-fit: cover; display: block;">
+                    <p style="margin: 10px 5px; font-size: 0.9em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ saved.post.title }}</p>
+                </a>
+            </div>
+        {% empty %}
+            <p style="color: #888;">You haven’t saved any photos yet.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

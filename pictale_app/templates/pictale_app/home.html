@@ -1,99 +1,98 @@
 {% extends "pictale_app/base.html" %}
 
 {% block content %}
-<h2>Daily Photo</h2>
+<div class="photo-container" style="max-width: 800px; margin: 0 auto;">
+    <h2 style="text-align: center; color: #444; margin-bottom: 30px;">Daily Photo</h2>
 
-{% if daily_photo %}
-    <div class="photo-card">
-        <h3>{{ daily_photo.title }}</h3>
-        <img src="{{ daily_photo.image.url }}" alt="{{ daily_photo.title }}" class="photo-img">
+    {% if daily_photo %}
+        <div class="photo-card" style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <h3 style="text-align: center; color: #007bff; margin-top: 0; margin-bottom: 20px;">{{ daily_photo.title }}</h3>
+            <img src="{{ daily_photo.image.url }}" alt="{{ daily_photo.title }}" class="photo-img" style="display: block; max-width: 100%; height: auto; margin: 0 auto 20px; border-radius: 6px;">
 
-        <p>{{ daily_photo.story }}</p>
+            <p style="font-size: 1.1em; color: #555; line-height: 1.6;">{{ daily_photo.story }}</p>
 
-        <p class="meta">
-            Posted on {{ daily_photo.date_featured }}  
-            {% if daily_photo.date_taken %}
-                (Taken: {{ daily_photo.date_taken }})
-            {% endif %}
-            <br>
-            {{ daily_photo.comments.count }} comment{{ daily_photo.comments.count|pluralize }}
-        </p>
+            <p class="meta" style="font-size: 0.9em; color: #888; border-top: 1px solid #eee; padding-top: 15px;">
+                Posted on {{ daily_photo.date_featured }}  
+                {% if daily_photo.date_taken %}
+                    (Taken: {{ daily_photo.date_taken }})
+                {% endif %}
+                <br>
+                {{ daily_photo.comments.count }} comment{{ daily_photo.comments.count|pluralize }}
+            </p>
 
-        <div class="actions">
+            <div class="actions" style="margin-top: 20px; display: flex; align-items: center; gap: 10px;">
+                {% if user.is_authenticated %}
+                    <form action="{% url 'like_photo' daily_photo.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="button button-action">👍 Like ({{ daily_photo.likes.count }})</button>
+                    </form>
+
+                    <form action="{% url 'save_photo' daily_photo.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="button button-action">📌 Save Photo</button>
+                    </form>
+                {% else %}
+                    <p><a href="{% url 'login' %}" style="color: #007bff; text-decoration: none;">Login</a> to like, save, or comment.</p>
+                {% endif %}
+            </div>
+
             {% if user.is_authenticated %}
-                <!-- Like form -->
-                <form action="{% url 'like_photo' daily_photo.id %}" method="post" style="display:inline;">
+                <form action="{% url 'add_comment' daily_photo.id %}" method="post" style="margin-top:20px;">
                     {% csrf_token %}
-                    <button type="submit">👍 Like ({{ daily_photo.likes.count }})</button>
+                    <textarea name="comment_text" placeholder="Add a comment..." rows="2" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; resize: vertical;"></textarea>
+                    <button type="submit" class="button button-action" style="margin-top: 10px;">Post Comment</button>
                 </form>
-
-                <!-- Save form -->
-                <form action="{% url 'save_photo' daily_photo.id %}" method="post" style="display:inline; margin-left: 10px;">
-                    {% csrf_token %}
-                    <button type="submit">💾 Save Photo</button>
-                </form>
-
-                <!-- Comment form -->
-                <form action="{% url 'add_comment' daily_photo.id %}" method="post" style="margin-top:10px;">
-                    {% csrf_token %}
-                    <textarea name="comment_text" placeholder="Add a comment..." rows="2"></textarea><br>
-                    <button type="submit">Post Comment</button>
-                </form>
-            {% else %}
-                <p><a href="{% url 'login' %}">Login</a> to like, save, or comment.</p>
             {% endif %}
-        </div>
 
-        <div class="comments">
-            <h4>Comments</h4>
-            {% for comment in daily_photo.comments.all %}
-                <p><strong>{{ comment.user.username }}</strong>: {{ comment.comment_text }}</p>
-            {% empty %}
-                <p>No comments yet.</p>
-            {% endfor %}
+            <div class="comments" style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+                <h4 style="color: #444; margin-bottom: 15px;">Comments</h4>
+                {% for comment in daily_photo.comments.all %}
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        {% if comment.user.profile_picture %}
+                            <img src="{{ comment.user.profile_picture.url }}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; margin-right: 10px;">
+                        {% else %}
+                            <img src="https://via.placeholder.com/30" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; margin-right: 10px;">
+                        {% endif %}
+                        <p style="margin: 0;"><strong>{{ comment.user.username }}</strong>: {{ comment.comment_text }}</p>
+                    </div>
+                {% empty %}
+                    <p style="color: #888;">No comments yet.</p>
+                {% endfor %}
+            </div>
         </div>
+    {% else %}
+        <p style="text-align: center; color: #888;">No photos yet.</p>
+    {% endif %}
+
+    <div style="display: flex; justify-content: space-between; margin-top: 30px; padding: 0 10px;">
+        {% if previous_photo_id %}
+            <a href="{% url 'home' %}?photo_id={{ previous_photo_id }}" class="button button-secondary">← Previous</a>
+        {% else %}
+            <span class="button button-secondary" style="visibility: hidden;"></span>
+        {% endif %}
+        
+        {% if next_photo_id %}
+            <a href="{% url 'home' %}?photo_id={{ next_photo_id }}" class="button button-secondary">Next →</a>
+        {% else %}
+            <span class="button button-secondary" style="visibility: hidden;"></span>
+        {% endif %}
     </div>
-{% else %}
-    <p>No photos yet.</p>
-{% endif %}
 
-<style>
-    .photo-card {
-        background: white;
-        padding: 20px;
-        margin: 20px auto;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        max-width: 600px;
-    }
-    .photo-img {
-        display: block;
-        max-width: 100%;
-        max-height: 400px;
-        margin: 10px auto;
-        border-radius: 6px;
-    }
-    .meta {
-        color: #555;
-        font-size: 0.9em;
-    }
-    .actions {
-        margin-top: 15px;
-    }
-    textarea {
-        width: 100%;
-        border-radius: 4px;
-        padding: 6px;
-    }
-    button {
-        padding: 6px 12px;
-        margin-top: 5px;
-        cursor: pointer;
-    }
-    .comments {
-        margin-top: 20px;
-        border-top: 1px solid #eee;
-        padding-top: 10px;
-    }
-</style>
+    <style>
+        .button-action {
+            background-color: #f8f9fa;
+            color: #495057;
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .button-action:hover {
+            background-color: #e2e6ea;
+        }
+    </style>
+</div>
 {% endblock %}
