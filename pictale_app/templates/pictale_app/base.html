@@ -42,79 +42,51 @@
 
         /* Main Content Container */
         .container {
-            width: 90%;
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 30px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            flex: 1;
+            flex: 1; /* Allows the main content to grow and push the footer down */
+            padding: 20px;
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
         }
 
-        /* Footer Styling */
-        footer {
-            text-align: center;
-            padding: 20px;
+        /* Form Styling (reused across different pages) */
+        form {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        form p {
+            margin-bottom: 1rem;
+        }
+        form input, form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box; /* Ensures padding doesn't affect total width */
+        }
+        form button.btn {
             background-color: #333;
             color: white;
-        }
-
-        /* Message Styling */
-        .messages {
-            margin: 1rem auto;
-            max-width: 800px;
-            width: 90%;
-        }
-        .alert {
-            padding: 10px 15px;
-            border-radius: 6px;
-            margin-bottom: 10px;
-        }
-        .alert.success {
-            background: #d1f7d1;
-            color: #065f08;
-            border: 1px solid #065f08;
-        }
-        .alert.info {
-            background: #dbeafe;
-            color: #1e40af;
-            border: 1px solid #1e40af;
-        }
-
-        /* General Button and Form Styling */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #555;
-        }
-
-        .form-group input, .form-group textarea {
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 16px;
-            box-sizing: border-box;
-            transition: border-color 0.3s ease;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        form button.btn:hover {
+            background-color: #555;
         }
 
-        .form-group input:focus, .form-group textarea:focus {
-            outline: none;
-            border-color: #007bff;
-        }
-        
+        /* Button Styling */
         .button {
             display: inline-block;
-            padding: 12px 25px;
-            border: none;
+            padding: 10px 20px;
             border-radius: 6px;
-            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
             text-align: center;
@@ -139,6 +111,28 @@
         .button-secondary:hover {
             background-color: #ced4da;
         }
+
+        /* Message Styling */
+        .messages {
+            margin: 1rem auto;
+            max-width: 800px;
+        }
+        .alert {
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        .alert.success {
+            background: #d1f7d1;
+            color: #065f08;
+            border: 1px solid #065f08;
+        }
+        .alert.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #1e40af;
+        }
+
     </style>
 </head>
 <body>
@@ -167,12 +161,10 @@
     {% endif %}
 
     <div class="container">
-        {% block content %}{% endblock %}
+        {% block content %}
+        {% endblock %}
     </div>
 
-    <footer>
-        <p>© 2025 Pictale. All rights reserved.</p>
-    </footer>
 </body>
 </html>
 

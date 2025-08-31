@@ -11,10 +11,47 @@ from django import forms
 # ----------------------------
 # Home Page
 # ----------------------------
-def home(request):
-    # Get photos ordered by latest featured
-    daily_photo = DailyPhoto.objects.order_by('-date_featured').first()
-    return render(request, "pictale_app/home.html", {"daily_photo": daily_photo})
+def home(request, photo_id=None):
+    # Get all photos, ordered by latest featured
+    all_photos = DailyPhoto.objects.order_by('-date_featured')
+    
+    if not all_photos:
+        # If there are no photos at all, render the page with no photo
+        return render(request, "pictale_app/home.html", {"daily_photo": None})
+
+    # Find the current photo
+    if photo_id:
+        daily_photo = get_object_or_404(DailyPhoto, id=photo_id)
+    else:
+        # Default to the most recent photo
+        daily_photo = all_photos.first()
+
+    # Get a list of all photo IDs in the sorted order
+    all_photo_ids = list(all_photos.values_list('id', flat=True))
+    
+    # Find the index of the current photo
+    try:
+        current_index = all_photo_ids.index(daily_photo.id)
+    except ValueError:
+        # This case should not happen if the photo is found, but as a safeguard
+        current_index = 0
+
+    # Determine previous and next photo IDs
+    previous_photo_id = None
+    if current_index < len(all_photo_ids) - 1:
+        previous_photo_id = all_photo_ids[current_index + 1]
+
+    next_photo_id = None
+    if current_index > 0:
+        next_photo_id = all_photo_ids[current_index - 1]
+    
+    context = {
+        "daily_photo": daily_photo,
+        "previous_photo_id": previous_photo_id,
+        "next_photo_id": next_photo_id,
+    }
+    
+    return render(request, "pictale_app/home.html", context)
 
 
 # ----------------------------
@@ -34,9 +71,9 @@ def like_photo(request, photo_id):
 def add_comment(request, photo_id):
     if request.method == "POST":
         photo = get_object_or_404(DailyPhoto, id=photo_id)
-        comment_text = request.POST.get("comment_text")
+        comment_text = request.POST.get('comment_text')
         if comment_text:
-            Comment.objects.create(user=request.user, post=photo, comment_text=comment_text, created_at=timezone.now())
+            Comment.objects.create(post=photo, user=request.user, comment_text=comment_text)
     return redirect("home")
 
 # ----------------------------
@@ -45,67 +82,49 @@ def add_comment(request, photo_id):
 @login_required
 def save_photo(request, photo_id):
     photo = get_object_or_404(DailyPhoto, id=photo_id)
-
-    # Check if already saved
-    if SavedPhoto.objects.filter(user=request.user, post=photo).exists():
-        messages.info(request, "📌 You’ve already saved this photo.")
+    saved_photo, created = SavedPhoto.objects.get_or_create(user=request.user, post=photo)
+    if created:
+        messages.success(request, f"'{photo.title}' has been saved to your profile.")
     else:
-        SavedPhoto.objects.create(user=request.user, post=photo)
-        messages.success(request, "💾 Photo saved successfully!")
-
+        messages.info(request, f"'{photo.title}' is already saved.")
     return redirect("home")
-
-
+    
 # ----------------------------
-# Profile Page
+# User Profile
 # ----------------------------
 @login_required
 def profile(request):
-    saved_photos = SavedPhoto.objects.filter(user=request.user).select_related("post")
-    return render(request, "pictale_app/profile.html", {
-        "user": request.user,
-        "saved_photos": saved_photos
-    })
+    saved_photos = SavedPhoto.objects.filter(user=request.user)
+    return render(request, "pictale_app/profile.html", {"saved_photos": saved_photos})
 
-
-# ----------------------------
-# Edit Profile
-# ----------------------------
 @login_required
 def edit_profile(request):
     if request.method == "POST":
-        request.user.username = request.POST.get("username", request.user.username)
-        request.user.email = request.POST.get("email", request.user.email)
-        request.user.bio = request.POST.get("bio", request.user.bio)
-        
-        if "profile_picture" in request.FILES:
-            request.user.profile_picture = request.FILES["profile_picture"]
-
+        user_form = forms.UserChangeForm(request.POST, instance=request.user)
+        request.user.bio = request.POST.get('bio')
+        if 'profile_picture' in request.FILES:
+            request.user.profile_picture = request.FILES['profile_picture']
         request.user.save()
-        messages.success(request, "Profile updated successfully!")
-        return redirect("profile")
+        messages.success(request, "Your profile has been updated.")
+        return redirect('profile')
+    
+    return render(request, 'pictale_app/edit_profile.html', {})
 
-    return render(request, "pictale_app/edit_profile.html", {"user": request.user})
-
-
-# ----------------------------
-# Change Password
-# ----------------------------
 @login_required
 def change_password(request):
-    if request.method == "POST":
+    if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
-            update_session_auth_hash(request, user)  # keep session alive
-            messages.success(request, "Password changed successfully!")
-            return redirect("profile")
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('profile')
+        else:
+            messages.error(request, 'Please correct the error below.')
     else:
         form = PasswordChangeForm(request.user)
-
-    return render(request, "pictale_app/change_password.html", {"form": form})
-
-
+    return render(request, 'pictale_app/change_password.html', {'form': form})
+    
 # ----------------------------
 # Photo Recommendations
 # ----------------------------
@@ -168,7 +187,7 @@ def register(request):
 # ----------------------------
 def photo_detail(request, photo_id):
     photo = get_object_or_404(DailyPhoto, id=photo_id)
-    return render(request, 'pictale_app/photo_detail.html', {'photo': photo})
+    return render(request, "pictale_app/photo_detail.html", {"photo": photo})
 
 
 

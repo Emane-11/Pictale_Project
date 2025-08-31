@@ -1,5 +1,10 @@
 from django.contrib import admin
-from .models import DailyPhoto, Comment, Like, SavedPhoto, PhotoRecommendation
+from django.contrib.auth.admin import UserAdmin
+from .models import User, DailyPhoto, Comment, Like, SavedPhoto, PhotoRecommendation
+
+@admin.register(User)
+class CustomUserAdmin(UserAdmin):
+    pass
 
 admin.site.register(DailyPhoto)
 admin.site.register(Comment)
