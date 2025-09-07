@@ -2,7 +2,7 @@
 
 Pictale is a full-stack photo-sharing project built on **Django**. It offers a complete solution with robust user authentication, a RESTful API, and a dynamic frontend.
 
------
+
 
 ### **🚀 Key Features**
 
@@ -15,7 +15,7 @@ Pictale is a full-stack photo-sharing project built on **Django**. It offers a c
       * **Photo Recommendations**: Users can submit their own photos for review.
       * **Responsive Design**: A modern, clean design that works on all devices.
 
------
+
 
 ### **🛠️ Installation & Setup**
 
@@ -45,7 +45,7 @@ Pictale is a full-stack photo-sharing project built on **Django**. It offers a c
 
 The application will be accessible at **[http://127.0.0.1:8000/](http://127.0.0.1:8000/)**.
 
------
+
 
 ### **📡 API Endpoints**
 
@@ -54,7 +54,7 @@ The application will be accessible at **[http://127.0.0.1:8000/](http://127.0.0.
 | **POST** | `/api/auth/register/` | Register a new user |
 | **POST** | `/api/auth/login/` | Log in a user |
 
------
+
 
 ### **🖥️ Frontend URLs**
 
@@ -67,14 +67,14 @@ The application will be accessible at **[http://127.0.0.1:8000/](http://127.0.0.
 | `/login/` | User login page |
 | `/register/` | User registration page |
 
------
+
 
 ### **🧪 Testing**
 
   * **API Testing**: Use **Postman** to import the provided collection (`postman_collection.json`) and send requests to **[http://127.0.0.1:8000/api/auth/](http://127.0.0.1:8000/api/auth/)**.
   * **Frontend Testing**: Navigate to **[http://127.0.0.1:8000/](http://127.0.0.1:8000/)** in your browser to access the web application.
 
------
+
 
 ### **📂 Project Structure**
 
@@ -92,7 +92,7 @@ Pictale_Project/
 └── requirements.txt
 ```
 
------
+
 
 ### **🤝 Contributing**
 
